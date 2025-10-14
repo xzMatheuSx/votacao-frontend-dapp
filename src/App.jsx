@@ -18,6 +18,13 @@ function App() {
   const [votosVencedor, setVotosVencedor] = useState(0);
   const [jaVotou, setJaVotou] = useState(false);
 
+  // Log da porta e IP
+  useEffect(() => {
+    console.log("Porta do Render (ou default 5173):", process.env.PORT || 5173);
+    console.log("Host interno do container: 0.0.0.0");
+   
+  }, []);
+
   useEffect(() => {
     const timer = setInterval(() => {
       if (contract) {

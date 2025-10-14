@@ -1,0 +1,1 @@
+export const contrato_endereco = "0xBbD7920B2981775535bb0F59Ebf34B0af8Ec9DD5";

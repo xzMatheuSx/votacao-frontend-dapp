@@ -18,12 +18,16 @@ function App() {
   const [votosVencedor, setVotosVencedor] = useState(0);
   const [jaVotou, setJaVotou] = useState(false);
 
-  // Log da porta e IP
+
+ 
+    
   useEffect(() => {
-    console.log("Porta do Render (ou default 5173):", process.env.PORT || 5173);
-    console.log("Host interno do container: 0.0.0.0");
-   
-  }, []);
+  console.log("URL completa do app:", window.location.href);
+  console.log("Host:", window.location.hostname);
+  console.log("Porta:", window.location.port);
+  console.log("Protocolo:", window.location.protocol);
+}, []); 
+  
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -137,6 +141,7 @@ function App() {
 
   return (
     <div className="App">
+      
       <h1>Sistema de Votação Blockchain</h1>
       <ConnectWallet onDataLoaded={loadContractData} />
       {account && (
@@ -181,5 +186,6 @@ function App() {
     </div>
   );
 }
-
+console.log("Porta do Render (ou default 5173):", process.env.PORT || 5173);
+    console.log("Host interno do container: 0.0.0.0");
 export default App;

@@ -133,7 +133,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Sistema de Votação Blockchain</h1>
+      <h1>Sistema de Votação em Blockchain</h1>
 
       <ConnectWallet onDataLoaded={loadContractData} />
 

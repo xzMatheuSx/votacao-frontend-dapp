@@ -139,7 +139,7 @@ function App() {
 
       {account && (
         <>
-          <p>Conta: {account}</p>
+
           {isAdmin && <p><strong>Você é o Admin</strong></p>}
           <hr />
 

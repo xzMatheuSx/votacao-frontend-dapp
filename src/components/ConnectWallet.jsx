@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { contrato_endereco } from '../contract/AddressContract';
 import contratoAbi from '../contract/AddressAbi.json';
 
-function ConnectWallet({ onDataLoaded }) {
+function ConnectWallet({ onDataLoaded, onDisconnect }) {
   const [account, setAccount] = useState('');
   const [contract, setContract] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -37,10 +37,30 @@ function ConnectWallet({ onDataLoaded }) {
     }
   };
 
-  const disconnectWallet = () => {
-    setAccount('');
-    setContract(null);
-    setIsConnected(false);
+  const disconnectWallet = async () => {
+    try {
+      if (window.ethereum) {
+        await window.ethereum.request({
+          method: 'wallet_revokePermissions',
+          params: [{ eth_accounts: {} }],
+        });
+      }
+      setAccount('');
+      setContract(null);
+      setIsConnected(false);
+      if (onDisconnect) {
+        onDisconnect();
+      }
+      console.log('Desconectado com sucesso.');
+    } catch (error) {
+      console.error('Erro ao desconectar:', error);
+      setAccount('');
+      setContract(null);
+      setIsConnected(false);
+      if (onDisconnect) {
+        onDisconnect();
+      }
+    }
   };
 
   return (

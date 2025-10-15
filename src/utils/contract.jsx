@@ -6,17 +6,12 @@ export const getContract = async () => {
   if (!window.ethereum) {
     throw new Error('MetaMask não detectado. Instale a extensão MetaMask.');
   }
-  const provider = new ethers.BrowserProvider(window.ethereum);
-  
-  // Verifica se já há contas conectadas
+  const provider = new ethers.BrowserProvider(window.ethereum);                                         
   let accounts = await provider.listAccounts();
-  console.log('Contas autorizadas:', accounts.length); // Debug: Veja no console (F12)
   
   if (accounts.length === 0) {
-    console.log('Nenhuma conta autorizada. Abrindo pop-up...'); // Debug
-    // Só solicita se não houver contas conectadas (evita pop-up desnecessário)
     await window.ethereum.request({ method: 'eth_requestAccounts' });
-    accounts = await provider.listAccounts(); // Atualiza a lista após solicitação
+    accounts = await provider.listAccounts(); 
   }
   
   if (accounts.length === 0) {

@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
-import AdminPanel from './components/AdminPanel.jsx'
-import VotingStatus from './components/VotingStatus.jsx'
-import CandidatesList from './components/CandidatesList.jsx'
-import Results from './components/Results.jsx'
-import ConnectWallet from './components/ConnectWallet.jsx'
-import './App.css'
+import { useState, useEffect } from 'react';
+import AdminPanel from './components/AdminPanel.jsx';
+import VotingStatus from './components/VotingStatus.jsx';
+import CandidatesList from './components/CandidatesList.jsx';
+import Results from './components/Results.jsx';
+import ConnectWallet from './components/ConnectWallet.jsx';
+import './App.css';
 
 function App() {
   const [contract, setContract] = useState(null);
@@ -18,23 +18,13 @@ function App() {
   const [votosVencedor, setVotosVencedor] = useState(0);
   const [jaVotou, setJaVotou] = useState(false);
 
-
  
-    
-  useEffect(() => {
-  console.log("URL completa do app:", window.location.href);
-  console.log("Host:", window.location.hostname);
-  console.log("Porta:", window.location.port);
-  console.log("Protocolo:", window.location.protocol);
-}, []); 
-  
-
   useEffect(() => {
     const timer = setInterval(() => {
       if (contract) {
         updateTempoRestante();
       }
-    }, 1000);
+    }, 500);
     return () => clearInterval(timer);
   }, [contract]);
 
@@ -47,12 +37,13 @@ function App() {
 
       const total = await cont.obterTotalCandidatos();
       setTotalCandidatos(Number(total));
-      const candidato = [];
+
+      const candidatoList = [];
       for (let i = 0; i < Number(total); i++) {
         const cand = await cont.candidatos(i);
-        candidato.push({ nome: cand.nome, votos: cand.votos.toString() });
+        candidatoList.push({ nome: cand.nome, votos: cand.votos.toString() });
       }
-      setCandidatos(candidato);
+      setCandidatos(candidatoList);
 
       const ativa = await cont.estaAtiva();
       setVotacaoAtiva(ativa);
@@ -65,9 +56,7 @@ function App() {
           const [vencedorNome, votos] = await cont.resultadoFinal();
           setVencedor(vencedorNome);
           setVotosVencedor(votos.toString());
-        } catch (e) {
-          // Votação não finalizada ainda
-        }
+        } catch {}
       }
 
       await updateTempoRestante();
@@ -77,11 +66,14 @@ function App() {
   };
 
   const updateTempoRestante = async () => {
-    if (contract) {
+    if (!contract) return;
+    try {
       const tempo = await contract.tempoRestante();
       setTempoRestante(Number(tempo));
       const ativa = await contract.estaAtiva();
       setVotacaoAtiva(ativa);
+    } catch (error) {
+      console.error('Erro ao atualizar tempo:', error);
     }
   };
 
@@ -141,9 +133,10 @@ function App() {
 
   return (
     <div className="App">
-      
       <h1>Sistema de Votação Blockchain</h1>
+
       <ConnectWallet onDataLoaded={loadContractData} />
+
       {account && (
         <>
           <p>Conta: {account}</p>
@@ -186,6 +179,5 @@ function App() {
     </div>
   );
 }
-console.log("Porta do Render (ou default 5173):", process.env.PORT || 5173);
-    console.log("Host interno do container: 0.0.0.0");
+
 export default App;

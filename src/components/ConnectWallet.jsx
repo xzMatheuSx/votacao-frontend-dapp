@@ -1,43 +1,46 @@
-import { useState, useEffect } from 'react';
-import { getContract } from '../utils/contract';
+import { useState } from 'react';
+import { ethers } from 'ethers';
+import { contrato_endereco } from '../contract/AddressContract';
+import contratoAbi from '../contract/AddressAbi.json';
 
 function ConnectWallet({ onDataLoaded }) {
   const [account, setAccount] = useState('');
   const [contract, setContract] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
 
-  useEffect(() => {
-    
-  }, []);
-
   const connectWallet = async () => {
     try {
-      const cont = await getContract();
-      const addr = await cont.runner.getAddress();  // Use 'runner' em ethers v6 para o signer do contrato
-      setContract(cont);
+      if (!window.ethereum) {
+        alert('MetaMask não detectado. Instale a extensão MetaMask.');
+        return;
+      }
+
+      const [addr] = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const contrato = new ethers.Contract(contrato_endereco, contratoAbi, signer);
+
+      setContract(contrato);
       setAccount(addr);
       setIsConnected(true);
+
       if (onDataLoaded) {
-        await onDataLoaded(cont, addr);
+        await onDataLoaded(contrato, addr);
       }
     } catch (error) {
       console.error('Erro ao conectar:', error);
-      if (error.message.includes('MetaMask')) {
-        alert(error.message);
-      } else if (error.message.includes('User denied')) {
+      if (error.code === 4001) {
         alert('Conexão negada pelo usuário.');
+      } else {
+        alert('Erro ao conectar: ' + error.message);
       }
     }
   };
 
-  const disconnectWallet = async () => {
-    try {
-      setAccount('');
-      setContract(null);
-      setIsConnected(false);
-    } catch (error) {
-      console.error('Erro ao desconectar:', error);
-    }
+  const disconnectWallet = () => {
+    setAccount('');
+    setContract(null);
+    setIsConnected(false);
   };
 
   return (

@@ -18,42 +18,41 @@ function App() {
   const [votosVencedor, setVotosVencedor] = useState(0);
   const [jaVotou, setJaVotou] = useState(false);
 
- 
   useEffect(() => {
     const timer = setInterval(() => {
-      if (contract) {
-        updateTempoRestante();
-      }
+      if (contract) updateTempoRestante();
     }, 500);
     return () => clearInterval(timer);
   }, [contract]);
 
-  const loadContractData = async (cont, addr) => {
-    try {
-      const admin = await cont.admin();
-      setIsAdmin(admin.toLowerCase() === addr.toLowerCase());
-      setAccount(addr);
-      setContract(cont);
+  const loadContractData = async (addr) => {
+    if (!contract) return;
 
-      const total = await cont.obterTotalCandidatos();
+    try {
+      setAccount(addr);
+
+      const admin = await contract.admin();
+      setIsAdmin(admin.toLowerCase() === addr.toLowerCase());
+
+      const total = await contract.obterTotalCandidatos();
       setTotalCandidatos(Number(total));
 
       const candidatoList = [];
       for (let i = 0; i < Number(total); i++) {
-        const cand = await cont.candidatos(i);
+        const cand = await contract.candidatos(i);
         candidatoList.push({ nome: cand.nome, votos: cand.votos.toString() });
       }
       setCandidatos(candidatoList);
 
-      const ativa = await cont.estaAtiva();
+      const ativa = await contract.estaAtiva();
       setVotacaoAtiva(ativa);
 
-      const eleitor = await cont.eleitores(addr);
+      const eleitor = await contract.eleitores(addr);
       setJaVotou(eleitor.votou);
 
       if (!ativa) {
         try {
-          const [vencedorNome, votos] = await cont.resultadoFinal();
+          const [vencedorNome, votos] = await contract.resultadoFinal();
           setVencedor(vencedorNome);
           setVotosVencedor(votos.toString());
         } catch {}
@@ -83,7 +82,7 @@ function App() {
       const tx = await contract.adicionarCandidato(nome);
       await tx.wait();
       alert('Candidato adicionado!');
-      loadContractData(contract, account);
+      loadContractData(account);
     } catch (error) {
       alert('Erro: ' + error.message);
     }
@@ -95,7 +94,7 @@ function App() {
       const tx = await contract.iniciarVotacao(BigInt(duracao));
       await tx.wait();
       alert('Votação iniciada!');
-      loadContractData(contract, account);
+      loadContractData(account);
     } catch (error) {
       alert('Erro: ' + error.message);
     }
@@ -107,7 +106,7 @@ function App() {
       const tx = await contract.votar(BigInt(indice));
       await tx.wait();
       alert('Voto registrado!');
-      loadContractData(contract, account);
+      loadContractData(account);
     } catch (error) {
       alert('Erro: ' + error.message);
     }
@@ -119,7 +118,7 @@ function App() {
       const tx = await contract.novaVotacao();
       await tx.wait();
       alert('Nova votação iniciada!');
-      loadContractData(contract, account);
+      loadContractData(account);
     } catch (error) {
       alert('Erro: ' + error.message);
     }
@@ -135,11 +134,13 @@ function App() {
     <div className="App">
       <h1>Sistema de Votação em Blockchain</h1>
 
-      <ConnectWallet onDataLoaded={loadContractData} />
+      <ConnectWallet
+        onContractReady={setContract}
+        onDataLoaded={loadContractData}
+      />
 
       {account && (
         <>
-
           {isAdmin && <p><strong>Você é o Admin</strong></p>}
           <hr />
 
@@ -172,8 +173,6 @@ function App() {
             votosVencedor={votosVencedor}
             totalCandidatos={totalCandidatos}
           />
-
-          {jaVotou && votacaoAtiva && <p className="aviso-voto">Você já votou!</p>}
         </>
       )}
     </div>

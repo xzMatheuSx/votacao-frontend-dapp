@@ -1,42 +1,223 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+.App {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.App > h1,
+.App > hr,
+.App > p,
+.web3-connector {
+  grid-column: 1 / -1;
+}
+
+.App > p > strong {
+  background-color: #2a2a2a;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+}
+
+/* Connect Wallet */
+.web3-connector {
+  background-color: #242424;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #333;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.btn-connect {
+  background-color: #58a6ff;
+  color: #000;
+  border-color: #58a6ff;
+  font-weight: 600;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.btn-connect:hover {
+  background-color: #79c0ff;
+  border-color: #79c0ff;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.connection-status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: center;
 }
 
-.card {
-  padding: 2em;
+.connection-status p {
+  font-family: monospace;
+  font-size: 0.8rem;
+  background-color: #1a1a1a;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  word-break: break-all;
 }
 
-.read-the-docs {
+.btn-disconnect {
+  background-color: transparent;
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.btn-disconnect:hover {
+  background-color: rgba(255, 107, 107, 0.1);
+}
+
+/* Admin Panel */
+.admin-panel {
+  background-color: #242424;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.admin-panel h2 {
+  text-align: center;
+  color: #ccc;
+}
+
+.admin-section {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.admin-section input {
+  flex: 1;
+}
+
+.admin-panel > p {
+  text-align: center;
   color: #888;
+  font-style: italic;
+}
+
+.btn-reset {
+  width: 100%;
+  background-color: #f59e0b;
+  color: #000;
+  border-color: #f59e0b;
+  margin-top: 0.5rem;
+}
+
+.btn-reset:hover {
+  background-color: #fbbf24;
+  border-color: #fbbf24;
+}
+
+/* Voting Status */
+.voting-status {
+  background-color: #242424;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #333;
+  text-align: center;
+}
+
+.voting-status h2 {
+  color: #ccc;
+}
+
+.voting-status p {
+  margin: 0.5rem 0;
+}
+
+/* Candidatos */
+.candidatos {
+  background-color: #242424;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.candidatos h2 {
+  text-align: center;
+  color: #ccc;
+}
+
+.candidatos > p {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}
+
+.candidatos ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+}
+
+.candidatos li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem;
+  margin-bottom: 0.6rem;
+  background-color: #2a2a2a;
+  border-radius: 6px;
+  border: 1px solid #333;
+}
+
+.candidatos li:hover {
+  background-color: #4b854b;
+  border-color: #444;
+}
+
+.btn-votar {
+  background-color: #3fb950;
+  color: #000;
+  border-color: #3fb950;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.btn-votar:hover {
+  background-color: #fafaf6;
+  border-color: #56d364;
+}
+
+/* Resultados */
+.resultados {
+  background-color: #242424;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #333;
+  text-align: center;
+}
+
+.resultados h2 {
+  color: #ccc;
+}
+
+.resultados p {
+  background-color: rgba(63, 185, 80, 0.1);
+  color: #3fb950;
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid rgba(63, 185, 80, 0.3);
+  margin-top: 0.4rem;
+}
+
+/* Responsivo */
+@media (max-width: 1024px) {
+  .App {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-section {
+    flex-direction: column;
+  }
+
+  .candidatos li {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .btn-votar {
+    width: 100%;
+  }
 }

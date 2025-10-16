@@ -3,9 +3,8 @@ import { ethers } from 'ethers';
 import { contrato_endereco } from '../contract/AddressContract';
 import contratoAbi from '../contract/AddressAbi.json';
 
-function ConnectWallet({ onDataLoaded, onDisconnect }) {
+function ConnectWallet({ onContractReady, onDataLoaded, onDisconnect }) {
   const [account, setAccount] = useState('');
-  const [contract, setContract] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
 
   const connectWallet = async () => {
@@ -20,20 +19,16 @@ function ConnectWallet({ onDataLoaded, onDisconnect }) {
       const signer = await provider.getSigner();
       const contrato = new ethers.Contract(contrato_endereco, contratoAbi, signer);
 
-      setContract(contrato);
       setAccount(addr);
       setIsConnected(true);
 
-      if (onDataLoaded) {
-        await onDataLoaded(contrato, addr);
-      }
+      if (onContractReady) onContractReady(contrato);  // seta o contract no estado do App
+      if (onDataLoaded) await onDataLoaded(addr);       // carrega os dados do contrato
+
     } catch (error) {
       console.error('Erro ao conectar:', error);
-      if (error.code === 4001) {
-        alert('Conexão negada pelo usuário.');
-      } else {
-        alert('Erro ao conectar: ' + error.message);
-      }
+      if (error.code === 4001) alert('Conexão negada pelo usuário.');
+      else alert('Erro ao conectar: ' + error.message);
     }
   };
 
@@ -46,20 +41,14 @@ function ConnectWallet({ onDataLoaded, onDisconnect }) {
         });
       }
       setAccount('');
-      setContract(null);
       setIsConnected(false);
-      if (onDisconnect) {
-        onDisconnect();
-      }
+      if (onDisconnect) onDisconnect();
       console.log('Desconectado com sucesso.');
     } catch (error) {
       console.error('Erro ao desconectar:', error);
       setAccount('');
-      setContract(null);
       setIsConnected(false);
-      if (onDisconnect) {
-        onDisconnect();
-      }
+      if (onDisconnect) onDisconnect();
     }
   };
 
@@ -77,7 +66,7 @@ function ConnectWallet({ onDataLoaded, onDisconnect }) {
           </button>
         </div>
       )}
-      {contract && <p>Contrato conectado: {contract.target}</p>}
+       
     </div>
   );
 }

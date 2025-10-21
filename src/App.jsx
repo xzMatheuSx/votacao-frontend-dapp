@@ -19,11 +19,21 @@ function App() {
   const [jaVotou, setJaVotou] = useState(false);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      if (contract) updateTempoRestante();
-    }, 500);
-    return () => clearInterval(timer);
-  }, [contract]);
+  const initTimer = async () => {
+    if (!contract) return;
+
+    const restante = await contract.tempoRestante(); // retorna em segundos
+    setTempoRestante(Number(restante));
+  };
+
+  initTimer();
+
+  const timer = setInterval(() => {
+    setTempoRestante(prev => Math.max(prev - 1, 0));
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, [contract]);
 
   const loadContractData = async (addr) => {
     if (!contract) return;
@@ -89,14 +99,13 @@ function App() {
   };
 
   const handleIniciarVotacao = async (duracao) => {
-    if (!contract || !duracao) return;
     try {
       const tx = await contract.iniciarVotacao(BigInt(duracao));
       await tx.wait();
       alert('Votação iniciada!');
       loadContractData(account);
     } catch (error) {
-      alert('Erro: ' + error.message);
+      alert('Error: ' + error.message);
     }
   };
 
@@ -108,7 +117,7 @@ function App() {
       alert('Voto registrado!');
       loadContractData(account);
     } catch (error) {
-      alert('Erro: ' + error.message);
+      alert('Error: ' + error.message);
     }
   };
 
@@ -120,7 +129,7 @@ function App() {
       alert('Nova votação iniciada!');
       loadContractData(account);
     } catch (error) {
-      alert('Erro: ' + error.message);
+      alert('Error: ' + error.message);
     }
   };
 

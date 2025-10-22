@@ -17,12 +17,13 @@ function App() {
   const [vencedor, setVencedor] = useState('');
   const [votosVencedor, setVotosVencedor] = useState(0);
   const [jaVotou, setJaVotou] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
   const initTimer = async () => {
     if (!contract) return;
 
-    const restante = await contract.tempoRestante(); // retorna em segundos
+    const restante = await contract.tempoRestante();
     setTempoRestante(Number(restante));
   };
 
@@ -112,13 +113,17 @@ function App() {
   const handleVotar = async (indice) => {
     if (!contract) return;
     try {
+      setLoading(true);
       const tx = await contract.votar(BigInt(indice));
       await tx.wait();
+      setLoading(false);
       alert('Voto registrado!');
       loadContractData(account);
     } catch (error) {
       alert('Error: ' + error.message);
-    }
+    }finally {
+    setLoading(false);
+  }
   };
 
   const handleNovaVotacao = async () => {
@@ -174,6 +179,7 @@ function App() {
             votacaoAtiva={votacaoAtiva}
             jaVotou={jaVotou}
             onVotar={handleVotar}
+            loading={loading}
           />
 
           <Results

@@ -21,7 +21,6 @@ function App() {
 
   useEffect(() => {
     if (!contract) return;
-
     let interval;
 
     const fetchTempoBlockchain = async () => {
@@ -42,7 +41,7 @@ function App() {
     return () => clearInterval(interval);
   }, [contract]);
 
-  // Buscar resultado final quando votação termina
+  //buscar resultado final quando votação termina
   useEffect(() => {
     const fetchResultado = async () => {
       if (!contract || votacaoAtiva) return;
@@ -52,7 +51,7 @@ function App() {
         setVencedor(vencedorNome);
         setVotosVencedor(votos.toString());
 
-        // Atualizar votos dos candidatos
+        //atualizar votos dos candidatos
         const total = await contract.obterTotalCandidatos();
         const candidatoList = [];
         for (let i = 0; i < Number(total); i++) {

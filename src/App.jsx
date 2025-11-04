@@ -20,21 +20,21 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-  const initTimer = async () => {
-    if (!contract) return;
+    const initTimer = async () => {
+      if (!contract) return;
 
-    const restante = await contract.tempoRestante();
-    setTempoRestante(Number(restante));
-  };
+      const restante = await contract.tempoRestante();
+      setTempoRestante(Number(restante));
+    };
 
-  initTimer();
+    initTimer();
 
-  const timer = setInterval(() => {
-    setTempoRestante(prev => Math.max(prev - 1, 0));
-  }, 1000);
+    const timer = setInterval(() => {
+      setTempoRestante(prev => Math.max(prev - 1, 0));
+    }, 1000);
 
-  return () => clearInterval(timer);
-}, [contract]);
+    return () => clearInterval(timer);
+  }, [contract]);
 
   const loadContractData = async (addr) => {
     if (!contract) return;
@@ -51,7 +51,7 @@ function App() {
       const candidatoList = [];
       for (let i = 0; i < Number(total); i++) {
         const cand = await contract.candidatos(i);
-        candidatoList.push({ nome: cand.nome, votos: cand.votos.toString() });
+        candidatoList.push({ nome: cand.nome, votos: Number(cand.votos) });
       }
       setCandidatos(candidatoList);
 
@@ -66,7 +66,11 @@ function App() {
           const [vencedorNome, votos] = await contract.resultadoFinal();
           setVencedor(vencedorNome);
           setVotosVencedor(votos.toString());
-        } catch {}
+
+        } catch (error) {
+          console.error("Erro ao buscar resultado final:", error);
+          alert("Erro ao buscar resultado final.");
+        }
       }
 
       await updateTempoRestante();
@@ -101,7 +105,7 @@ function App() {
 
   const handleIniciarVotacao = async (duracao) => {
     try {
-      const tx = await contract.iniciarVotacao(BigInt(duracao));
+      const tx = await contract.iniciarVotacao(duracao);
       await tx.wait();
       alert('Votação iniciada!');
       loadContractData(account);
@@ -114,16 +118,16 @@ function App() {
     if (!contract) return;
     try {
       setLoading(true);
-      const tx = await contract.votar(BigInt(indice));
+      const tx = await contract.votar(indice);
       await tx.wait();
       setLoading(false);
       alert('Voto registrado!');
       loadContractData(account);
     } catch (error) {
       alert('Error: ' + error.message);
-    }finally {
-    setLoading(false);
-  }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleNovaVotacao = async () => {

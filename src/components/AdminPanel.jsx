@@ -38,7 +38,7 @@ function AdminPanel({ votacaoAtiva, totalCandidatos, onAdicionarCandidato, onIni
         <div className="admin-section">
           <input
             type="number"
-            placeholder="Duração em segundos"
+            placeholder="Duração em minutos"
             value={duracaoVotacao}
             onChange={(e) => setDuracaoVotacao(e.target.value)}
           />

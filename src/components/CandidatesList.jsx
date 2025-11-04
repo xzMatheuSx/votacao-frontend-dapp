@@ -15,7 +15,7 @@ function CandidatesList({ candidatos, votacaoAtiva, jaVotou, onVotar, loading })
                   disabled={loading} 
                   className={`btn-votar ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500'}`}
                 >
-                  {loading ? "Enviando..." : "Votar"}
+                  {loading ? "Enviando transação..." : "Votar"}
                 </button>
               )}
             </li>

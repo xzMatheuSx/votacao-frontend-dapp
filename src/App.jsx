@@ -67,34 +67,35 @@ function App() {
     fetchResultado();
   }, [contract, votacaoAtiva]);
 
-  const loadContractData = async (addr) => {
-    if (!contract) return;
+  const loadContractData = async (addr, contratoInstancia = null) => {
+    const contratoAtivo = contratoInstancia || contract;
+    if (!contratoAtivo) return;
 
     try {
       setAccount(addr);
 
-      const admin = await contract.admin();
+      const admin = await contratoAtivo.admin();
       setIsAdmin(admin.toLowerCase() === addr.toLowerCase());
 
-      const total = await contract.obterTotalCandidatos();
+      const total = await contratoAtivo.obterTotalCandidatos();
       setTotalCandidatos(Number(total));
 
       const candidatoList = [];
       for (let i = 0; i < Number(total); i++) {
-        const cand = await contract.candidatos(i);
+        const cand = await contratoAtivo.candidatos(i);
         candidatoList.push({ nome: cand.nome, votos: Number(cand.votos) });
       }
       setCandidatos(candidatoList);
 
-      const ativa = await contract.estaAtiva();
+      const ativa = await contratoAtivo.estaAtiva();
       setVotacaoAtiva(ativa);
 
-      const eleitor = await contract.eleitores(addr);
+      const eleitor = await contratoAtivo.eleitores(addr);
       setJaVotou(eleitor.votou);
 
       if (!ativa) {
         try {
-          const [vencedorNome, votos] = await contract.resultadoFinal();
+          const [vencedorNome, votos] = await contratoAtivo.resultadoFinal();
           setVencedor(vencedorNome);
           setVotosVencedor(votos.toString());
         } catch (error) {
@@ -102,7 +103,7 @@ function App() {
         }
       }
 
-      const tempo = await contract.tempoRestante();
+      const tempo = await contratoAtivo.tempoRestante();
       setTempoRestante(Number(tempo));
 
     } catch (error) {

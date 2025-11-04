@@ -24,7 +24,7 @@ function ConnectWallet({ onContractReady, onDataLoaded, onDisconnect, isDarkMode
       setIsConnected(true);
 
       if (onContractReady) onContractReady(contrato);  // seta o contract no estado do App
-      if (onDataLoaded) await onDataLoaded(addr);       // carrega os dados do contrato
+      if (onDataLoaded) await onDataLoaded(addr, contrato);  // passa a instancia do contrato
 
     } catch (error) {
       console.error('Erro ao conectar:', error);
@@ -67,7 +67,9 @@ function ConnectWallet({ onContractReady, onDataLoaded, onDisconnect, isDarkMode
           </div>
           <div>
             <h2 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Carteira MetaMask</h2>
-            <p className={`text-sm ${isDarkMode ? 'text-dark-muted' : 'text-light-muted'}`}>Conecte para interagir com o contrato</p>
+            <p className={`text-sm ${isDarkMode ? 'text-dark-muted' : 'text-light-muted'}`}>
+              {isConnected ? 'Conectado e pronto para votar' : 'Conecte para interagir com o contrato'}
+            </p>
           </div>
         </div>
 

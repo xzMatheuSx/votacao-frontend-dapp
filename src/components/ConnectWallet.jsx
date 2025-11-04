@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { ethers } from 'ethers';
 import { contrato_endereco } from '../contract/AddressContract';
 import contratoAbi from '../contract/AddressAbi.json';
+import metamaskIcon from '../image/metamask.png';
 
-function ConnectWallet({ onContractReady, onDataLoaded, onDisconnect }) {
+function ConnectWallet({ onContractReady, onDataLoaded, onDisconnect, isDarkMode }) {
   const [account, setAccount] = useState('');
   const [isConnected, setIsConnected] = useState(false);
 
@@ -52,21 +53,40 @@ function ConnectWallet({ onContractReady, onDataLoaded, onDisconnect }) {
     }
   };
 
+  const truncateAddress = (addr) => {
+    if (!addr) return '';
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  };
+
   return (
-    <div className="web3-connector">
-      {!isConnected ? (
-        <button onClick={connectWallet} className="btn-connect">
-          Conectar Carteira
-        </button>
-      ) : (
-        <div className="connection-status">
-          <p>Conta: {account}</p>
-          <button onClick={disconnectWallet} className="btn-disconnect">
-            Desconectar
-          </button>
+    <div className={isDarkMode ? 'card-dark' : 'card-light'}>
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center p-2">
+            <img src={metamaskIcon} alt="MetaMask" className="w-full h-full object-contain" />
+          </div>
+          <div>
+            <h2 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Carteira MetaMask</h2>
+            <p className={`text-sm ${isDarkMode ? 'text-dark-muted' : 'text-light-muted'}`}>Conecte para interagir com o contrato</p>
+          </div>
         </div>
-      )}
-       
+
+        {!isConnected ? (
+          <button onClick={connectWallet} className="btn-warning flex items-center gap-2">
+            <img src={metamaskIcon} alt="MetaMask" className="w-5 h-5" />
+            Conectar Carteira
+          </button>
+        ) : (
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <span className="bg-green-500/20 text-green-400 px-4 py-2 rounded-full text-sm font-mono">
+              {truncateAddress(account)}
+            </span>
+            <button onClick={disconnectWallet} className="btn-secondary text-sm">
+              Desconectar
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

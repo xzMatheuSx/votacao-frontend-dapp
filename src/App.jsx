@@ -20,21 +20,53 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const initTimer = async () => {
-      if (!contract) return;
+    if (!contract) return;
 
-      const restante = await contract.tempoRestante();
-      setTempoRestante(Number(restante));
+    let interval;
+
+    const fetchTempoBlockchain = async () => {
+      try {
+        const restante = await contract.tempoRestante();
+        setTempoRestante(Number(restante));
+
+        const ativa = await contract.estaAtiva();
+        setVotacaoAtiva(ativa);
+      } catch (err) {
+        console.error('Erro ao buscar tempo na blockchain:', err);
+      }
     };
 
-    initTimer();
+    fetchTempoBlockchain();
+    interval = setInterval(fetchTempoBlockchain, 100);
 
-    const timer = setInterval(() => {
-      setTempoRestante(prev => Math.max(prev - 1, 0));
-    }, 1000);
-
-    return () => clearInterval(timer);
+    return () => clearInterval(interval);
   }, [contract]);
+
+  // Buscar resultado final quando votação termina
+  useEffect(() => {
+    const fetchResultado = async () => {
+      if (!contract || votacaoAtiva) return;
+
+      try {
+        const [vencedorNome, votos] = await contract.resultadoFinal();
+        setVencedor(vencedorNome);
+        setVotosVencedor(votos.toString());
+
+        // Atualizar votos dos candidatos
+        const total = await contract.obterTotalCandidatos();
+        const candidatoList = [];
+        for (let i = 0; i < Number(total); i++) {
+          const cand = await contract.candidatos(i);
+          candidatoList.push({ nome: cand.nome, votos: Number(cand.votos) });
+        }
+        setCandidatos(candidatoList);
+      } catch (error) {
+        console.error('Erro ao buscar resultado final:', error);
+      }
+    };
+
+    fetchResultado();
+  }, [contract, votacaoAtiva]);
 
   const loadContractData = async (addr) => {
     if (!contract) return;
@@ -66,28 +98,16 @@ function App() {
           const [vencedorNome, votos] = await contract.resultadoFinal();
           setVencedor(vencedorNome);
           setVotosVencedor(votos.toString());
-
         } catch (error) {
-          console.error("Erro ao buscar resultado final:", error);
-          alert("Erro ao buscar resultado final.");
+          console.error('Erro ao buscar resultado final:', error);
         }
       }
 
-      await updateTempoRestante();
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-    }
-  };
-
-  const updateTempoRestante = async () => {
-    if (!contract) return;
-    try {
       const tempo = await contract.tempoRestante();
       setTempoRestante(Number(tempo));
-      const ativa = await contract.estaAtiva();
-      setVotacaoAtiva(ativa);
+
     } catch (error) {
-      console.error('Erro ao atualizar tempo:', error);
+      console.error('Erro ao carregar dados:', error);
     }
   };
 
@@ -110,7 +130,7 @@ function App() {
       alert('Votação iniciada!');
       loadContractData(account);
     } catch (error) {
-      alert('Error: ' + error.message);
+      alert('Erro: ' + error.message);
     }
   };
 
@@ -124,7 +144,7 @@ function App() {
       alert('Voto registrado!');
       loadContractData(account);
     } catch (error) {
-      alert('Error: ' + error.message);
+      alert('Erro: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -138,7 +158,7 @@ function App() {
       alert('Nova votação iniciada!');
       loadContractData(account);
     } catch (error) {
-      alert('Error: ' + error.message);
+      alert('Erro: ' + error.message);
     }
   };
 

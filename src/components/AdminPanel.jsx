@@ -10,7 +10,8 @@ function AdminPanel({ votacaoAtiva, totalCandidatos, onAdicionarCandidato, onIni
   };
 
   const handleIniciar = () => {
-    onIniciarVotacao(duracaoVotacao);
+    const duracaoSegundos = parseInt(duracaoVotacao) * 60;
+    onIniciarVotacao(duracaoSegundos);
     setDuracaoVotacao('');
   };
 

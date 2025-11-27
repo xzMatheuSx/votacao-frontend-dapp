@@ -162,6 +162,19 @@ function App() {
     }
   };
 
+  const handleDisconnect = () => {
+    setAccount('');
+    setContract(null);
+    setIsAdmin(false);
+    setCandidatos([]);
+    setTotalCandidatos(0);
+    setVotacaoAtiva(false);
+    setTempoRestante(0);
+    setVencedor('');
+    setVotosVencedor(0);
+    setJaVotou(false);
+  };
+
   const formatTempo = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -203,6 +216,7 @@ function App() {
           <ConnectWallet
             onContractReady={setContract}
             onDataLoaded={loadContractData}
+            onDisconnect={handleDisconnect}
             isDarkMode={isDarkMode}
           />
         </div>

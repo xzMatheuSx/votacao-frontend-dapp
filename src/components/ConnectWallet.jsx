@@ -89,6 +89,11 @@ function ConnectWallet({ onContractReady, onDataLoaded, onDisconnect, isDarkMode
           </div>
         )}
       </div>
+      <div className={`mt-3 pt-3 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} flex justify-center`}>
+        <p className={`text-xs font-mono ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+          Contrato: {contrato_endereco}
+        </p>
+      </div>
     </div>
   );
 }

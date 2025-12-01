@@ -70,7 +70,7 @@ function AdminPanel({ votacaoAtiva, totalCandidatos, onAdicionarCandidato, onIni
         )}
 
         <button onClick={handleNova} className="btn-danger w-full">
-          Nova Votação (Reset)
+          Nova Votação
         </button>
       </div>
     </div>

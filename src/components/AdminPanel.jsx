@@ -3,15 +3,23 @@ import { useState } from 'react';
 function AdminPanel({ votacaoAtiva, totalCandidatos, onAdicionarCandidato, onIniciarVotacao, onNovaVotacao, isDarkMode }) {
   const [newCandidateName, setNewCandidateName] = useState('');
   const [duracaoVotacao, setDuracaoVotacao] = useState('');
+  const [unidadeTempo, setUnidadeTempo] = useState('minutos');
 
   const handleAdicionar = () => {
     onAdicionarCandidato(newCandidateName);
     setNewCandidateName('');
   };
 
+  const unidadesParaSegundos = {
+    minutos: 60,
+    horas: 3600,
+    dias: 86400,
+  };
+
   const handleIniciar = () => {
-    const duracaoSegundos = parseInt(duracaoVotacao) * 60;
-    onIniciarVotacao(duracaoSegundos);
+    const valor = parseInt(duracaoVotacao);
+    const multiplicador = unidadesParaSegundos[unidadeTempo] || 60;
+    onIniciarVotacao(valor * multiplicador);
     setDuracaoVotacao('');
   };
 
@@ -55,14 +63,25 @@ function AdminPanel({ votacaoAtiva, totalCandidatos, onAdicionarCandidato, onIni
           </p>
         ) : (
           <div className={`flex flex-col sm:flex-row gap-3 pt-4 border-t ${isDarkMode ? 'border-dark-border' : 'border-light-border'}`}>
-            <input
-              type="number"
-              className={isDarkMode ? 'input-dark flex-1' : 'input-light flex-1'}
-              placeholder="Duração em minutos"
-              value={duracaoVotacao}
-              onChange={(e) => setDuracaoVotacao(e.target.value)}
-              min="1"
-            />
+            <div className="flex flex-1 gap-2">
+              <input
+                type="number"
+                className={isDarkMode ? 'input-dark flex-1' : 'input-light flex-1'}
+                placeholder="Duração"
+                value={duracaoVotacao}
+                onChange={(e) => setDuracaoVotacao(e.target.value)}
+                min="1"
+              />
+              <select
+                className={isDarkMode ? 'input-dark' : 'input-light'}
+                value={unidadeTempo}
+                onChange={(e) => setUnidadeTempo(e.target.value)}
+              >
+                <option value="minutos">Minutos</option>
+                <option value="horas">Horas</option>
+                <option value="dias">Dias</option>
+              </select>
+            </div>
             <button onClick={handleIniciar} className="btn-success whitespace-nowrap">
               Iniciar Votação
             </button>

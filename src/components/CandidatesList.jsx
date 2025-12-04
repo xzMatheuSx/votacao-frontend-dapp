@@ -1,4 +1,11 @@
-function CandidatesList({ candidatos, votacaoAtiva, jaVotou, onVotar, loading, isDarkMode }) {
+function CandidatesList({ candidatos, votacaoAtiva, jaVotou, onVotar, loading, isDarkMode, votacaoEncerrada }) {
+  // Se votacaoAtiva é false e votacaoEncerrada é true, então a votação foi encerrada
+  // Se votacaoAtiva é false e votacaoEncerrada é false, então a votação ainda não foi iniciada
+  const getStatusLabel = () => {
+    if (votacaoAtiva) return null;
+    return votacaoEncerrada ? 'Votação encerrada' : 'Aguardando início';
+  };
+
   return (
     <div className={isDarkMode ? 'card-dark h-full' : 'card-light h-full'}>
       <div className="flex items-center gap-2 mb-6">
@@ -65,8 +72,12 @@ function CandidatesList({ candidatos, votacaoAtiva, jaVotou, onVotar, loading, i
                       </span>
                     )
                   ) : (
-                    <span className="inline-flex items-center gap-2 bg-gray-500/20 text-gray-400 px-4 py-2 rounded-lg text-sm">
-                      Votação encerrada
+                    <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm ${
+                      votacaoEncerrada 
+                        ? 'bg-gray-500/20 text-gray-400' 
+                        : 'bg-yellow-500/20 text-yellow-400'
+                    }`}>
+                      {getStatusLabel()}
                     </span>
                   )}
                 </div>
